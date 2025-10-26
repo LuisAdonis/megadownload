@@ -42,7 +42,7 @@ COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 # Crear directorio de descargas
 RUN mkdir -p /app/downloads
 
-RUN chown -R www-data:www-data /app/downloads \
+RUN chown -R nodejs:nodejs /app/downloads \
     && chmod -R 775 /app/downloads
 # Cambiar a usuario no-root
 USER nodejs
