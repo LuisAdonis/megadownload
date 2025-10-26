@@ -144,8 +144,8 @@ export class DownloadController {
   };
  deleteFromHistoryall = async (req: Request, res: Response): Promise<void> => {
     try {
-      await Download.deleteMany();
-      res.json({ message: 'Todo el historial de descargas ha sido eliminado' });
+     const d= await Download.deleteMany();
+      res.json({ message: `Todo el historial de descargas ha sido eliminado ${d.deletedCount}` });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }
