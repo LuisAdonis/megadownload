@@ -1,62 +1,65 @@
-# Dockerfile para la API REST en TypeScript/Node.js
-FROM node:20-alpine AS builder
-
-# Instalar dependencias del sistema
-RUN apk add --no-cache python3 make g++ curl
-
-# Establecer directorio de trabajo
+# Stage 1: build
+FROM node:slim AS build
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Copiar package.json y package-lock.json
 COPY package*.json ./
-COPY tsconfig.json ./
 
-# Instalar dependencias
-RUN npm ci --only=production && \
-    npm cache clean --force
+# Instalar todas las dependencias (dev + prod)
+RUN npm ci
 
-# Copiar código fuente
-COPY src ./src
+# Copiar todo el código fuente
+COPY . .
 
 # Compilar TypeScript
-RUN npm install -g typescript && \
-    tsc
+RUN npm run build   # esto genera dist/
 
-# Etapa de producción
-FROM node:20-alpine
-
-# Instalar curl para healthcheck
-RUN apk add --no-cache curl
-
-# Crear usuario no-root
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Establecer directorio de trabajo
+# Stage 2: producción
+FROM node:slim AS prod
 WORKDIR /app
 
-# Copiar node_modules y código compilado desde builder
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 
-# Crear directorio de descargas
-RUN mkdir -p /app/downloads && \
-    chown -R nodejs:nodejs /app/downloads
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libwayland-client0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# Cambiar a usuario no-root
-USER nodejs
+    
+# Copiar solo las dependencias de producción
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Copiar el código compilado desde el build
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/src/firebase ./dist/firebase
+
+RUN mkdir -p /app/pdfs
+
 
 # Exponer puerto
 EXPOSE 3000
 
-# Variables de entorno por defecto
-ENV NODE_ENV=production \
-    PORT=3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
-
-# Comando de inicio
+# Ejecutar la app
 CMD ["node", "dist/index.js"]
