@@ -57,8 +57,8 @@ services:
   # Cliente Flutter Web
   flutter_web:
     build:
-      context: ./app
-      dockerfile: ../Dockerfile.flutter
+      context: .
+      dockerfile: Dockerfile.flutter
     container_name: megadownload_flutter_web
     restart: unless-stopped
     ports:
