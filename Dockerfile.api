@@ -53,7 +53,6 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 # Copiar el código compilado desde el build
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/src/firebase ./dist/firebase
 
 RUN mkdir -p /app/pdfs
 
