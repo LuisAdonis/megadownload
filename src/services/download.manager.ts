@@ -167,8 +167,12 @@ export class UniversalDownloadManager extends EventEmitter {
     if (!downloadInfo) return;
 
     try {
+      try {
+        fs.accessSync(this.defaultDownloadPath, fs.constants.W_OK);
+      } catch {
+        throw new Error(`No se puede escribir en ${this.defaultDownloadPath}. Verifica permisos del directorio en Docker.`);
+      }
 
-     
 
       downloadInfo.status = 'downloading';
       downloadInfo.startTime = Date.now();
