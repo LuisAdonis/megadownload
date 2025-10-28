@@ -145,9 +145,7 @@ export class UniversalDownloadManager extends EventEmitter {
   }
 
   private async processQueue(): Promise<void> {
-    const activeCount = Array.from(this.downloads.values())
-      .filter(d => d.status === 'downloading').length;
-
+    const activeCount = this.activeDownloads.size;
     if (activeCount >= this.maxConcurrent || this.queue.length === 0) {
       return;
     }
@@ -186,7 +184,7 @@ export class UniversalDownloadManager extends EventEmitter {
       // PASO 1: Obtener metadata ANTES de iniciar descarga
       try {
         const metadata = await downloader.getFileMetadata(downloadInfo.url);
-        downloadInfo.fileName = metadata.fileName;
+        downloadInfo.fileName = this.sanitizeFileName(metadata.fileName);
         downloadInfo.fileSize = metadata.fileSize;
 
         await this.saveToDatabase(downloadInfo);
@@ -202,7 +200,7 @@ export class UniversalDownloadManager extends EventEmitter {
         if (!fileName.includes('.')) {
           fileName += '.download';
         }
-        downloadInfo.fileName = fileName;
+        downloadInfo.fileName = this.sanitizeFileName(fileName);
       }
 
       const downloadPath = path.join(this.defaultDownloadPath, downloadInfo.fileName);
@@ -214,7 +212,11 @@ export class UniversalDownloadManager extends EventEmitter {
       downloader.on('progress', (progressData: any) => {
         downloadInfo.downloadedSize = progressData.downloadedSize;
         downloadInfo.fileSize = progressData.totalSize;
-        downloadInfo.progress = (downloadInfo.downloadedSize / downloadInfo.fileSize) * 100;
+        if (downloadInfo.fileSize > 0) {
+          downloadInfo.progress = (downloadInfo.downloadedSize / downloadInfo.fileSize) * 100;
+        } else {
+          downloadInfo.progress = 0;
+        }
 
         const now = Date.now();
         if (now - lastUpdate >= 1000) {
@@ -222,9 +224,11 @@ export class UniversalDownloadManager extends EventEmitter {
           const sizeDiff = downloadInfo.downloadedSize - lastDownloadedSize;
           downloadInfo.speed = sizeDiff / timeDiff;
 
-          if (downloadInfo.speed > 0) {
+          if (downloadInfo.speed > 0 && downloadInfo.fileSize > 0) {
             const remaining = downloadInfo.fileSize - downloadInfo.downloadedSize;
             downloadInfo.timeRemaining = Math.round(remaining / downloadInfo.speed);
+          } else {
+            downloadInfo.timeRemaining = undefined;
           }
 
           lastUpdate = now;
@@ -366,6 +370,25 @@ export class UniversalDownloadManager extends EventEmitter {
 
   private generateId(): string {
     return `download_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  private sanitizeFileName(originalName: string): string {
+    const base = path.basename(originalName || '');
+    let cleaned = base.replace(/[\/:*?"<>|]/g, '_').trim();
+    if (!cleaned) {
+      cleaned = `file_${Date.now()}`;
+    }
+    if (cleaned.length > 180) {
+      const extIndex = cleaned.lastIndexOf('.');
+      if (extIndex > 0 && extIndex < 140) {
+        const name = cleaned.slice(0, 140);
+        const ext = cleaned.slice(extIndex);
+        cleaned = name + ext;
+      } else {
+        cleaned = cleaned.slice(0, 180);
+      }
+    }
+    return cleaned;
   }
 
   destroy(): void {

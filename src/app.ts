@@ -12,7 +12,7 @@ export async function createApp() {
 
   // Conectar a MongoDB
   const dbService = DatabaseService.getInstance();
-  await dbService.connect( process.env.MONGO_URI);
+  await dbService.connect(config.mongoUri);
 
   // Inicializar gestor de descargas
   const downloadManager = new UniversalDownloadManager ({

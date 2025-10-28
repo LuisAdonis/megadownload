@@ -7,7 +7,7 @@ export function createDownloadRoutes(controller: DownloadController): Router {
   router.post('/downloads', controller.addDownload);
   router.get('/downloads', controller.getAllDownloads);
   router.get('/downloads/history', controller.getDownloadHistory);
-  router.delete('/downloads/history/all', controller.deleteFromHistoryall);
+  router.delete('/downloads/history/all', controller.deleteAllFromHistory);
   router.get('/downloads/:id', controller.getDownloadById);
   router.put('/downloads/:id/pause', controller.pauseDownload);
   router.put('/downloads/:id/resume', controller.resumeDownload);

@@ -32,7 +32,7 @@ export class DownloadController {
         res.status(409).json({
           error: 'El archivo ya ha sido descargado previamente',
           downloadId: existing.downloadId,
-          stautus:existing.status
+          status: existing.status
         });
         return;
       }
@@ -56,18 +56,20 @@ export class DownloadController {
   };
 
   getAllDownloads = (req: Request, res: Response): void => {
-    const { status } = req.query;
-    let downloads = this.downloadManager.getAllDownloads();
+    const statusParam = (req.query.status as string | undefined)?.toLowerCase();
+    const allowedStatuses = ['queued','downloading','paused','completed','failed','quota_exceeded'];
 
-    if (status) {
-      downloads = downloads.filter(d => d.status === status);
+    if (statusParam && !allowedStatuses.includes(statusParam)) {
+      res.status(400).json({ error: 'Parámetro status inválido', allowed: allowedStatuses });
+      return;
     }
-    // else{
-    //     downloads = this.downloadManager.getAllDownloads();
 
-    // }
+    let downloads = this.downloadManager.getAllDownloads();
+    if (statusParam) {
+      downloads = downloads.filter(d => d.status === statusParam);
+    }
 
-    res.json({ downloads,status });
+    res.json({ downloads });
   };
 
   getDownloadHistory = async (req: Request, res: Response): Promise<void> => {
@@ -142,7 +144,7 @@ export class DownloadController {
       res.status(500).json({ error: (error as Error).message });
     }
   };
- deleteFromHistoryall = async (req: Request, res: Response): Promise<void> => {
+  deleteAllFromHistory = async (req: Request, res: Response): Promise<void> => {
     try {
      const d= await Download.deleteMany();
       res.json({ message: `Todo el historial de descargas ha sido eliminado ${d.deletedCount}` });
@@ -161,6 +163,10 @@ export class DownloadController {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    if ((res as any).flushHeaders) {
+      (res as any).flushHeaders();
+    }
+    res.write('retry: 2000\n\n');
 
     const sendUpdate = (data: any) => {
       if (data.id === id) {
@@ -172,10 +178,15 @@ export class DownloadController {
     this.downloadManager.on('downloadCompleted', sendUpdate);
     this.downloadManager.on('downloadFailed', sendUpdate);
 
+    const heartbeat = setInterval(() => {
+      res.write(`: keep-alive\n\n`);
+    }, 15000);
+
     req.on('close', () => {
       this.downloadManager.off('downloadProgress', sendUpdate);
       this.downloadManager.off('downloadCompleted', sendUpdate);
       this.downloadManager.off('downloadFailed', sendUpdate);
+      clearInterval(heartbeat);
     });
   };
 }
