@@ -101,7 +101,7 @@ class DownloadsList extends ConsumerWidget {
   }
 
   // Static helpers for use from other widgets (e.g., SSE row)
-  static String _formatBytesStatic(int bytes) {
+  static String formatBytesStatic(int bytes) {
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     double v = bytes.toDouble();
     int i = 0;
@@ -112,7 +112,7 @@ class DownloadsList extends ConsumerWidget {
     return '${v.toStringAsFixed(v >= 10 || v == v.roundToDouble() ? 0 : 1)} ${units[i]}';
   }
 
-  static String _formatEtaStatic(int seconds) {
+  static String formatEtaStatic(int seconds) {
     final m = Duration(seconds: seconds);
     String two(int n) => n.toString().padLeft(2, '0');
     final h = two(m.inHours);
@@ -161,8 +161,8 @@ class _RealtimeInfoRow extends ConsumerWidget {
     final sse = ref.watch(downloadProgressProvider(id));
     return sse.when(
       data: (d) {
-        final speed = d.speed > 0 ? '${DownloadsList._formatBytesStatic(d.speed.toInt())}/s' : '-';
-        final eta = d.timeRemaining != null ? DownloadsList._formatEtaStatic(d.timeRemaining!) : '-';
+        final speed = d.speed > 0 ? '${DownloadsList.formatBytesStatic(d.speed.toInt())}/s' : '-';
+        final eta = d.timeRemaining != null ? DownloadsList.formatEtaStatic(d.timeRemaining!) : '-';
         return Row(
           children: [
             Icon(Icons.speed, size: 16, color: Colors.grey.shade700),
@@ -233,8 +233,8 @@ class _RealtimeHeader extends ConsumerWidget {
       data: (d) {
         final status = d.status;
         final name = d.fileName;
-        final size = DownloadsList._formatBytesStatic(d.fileSize);
-        final done = DownloadsList._formatBytesStatic(d.downloadedSize);
+        final size = DownloadsList.formatBytesStatic(d.fileSize);
+        final done = DownloadsList.formatBytesStatic(d.downloadedSize);
         return Row(
           children: [
             Expanded(
@@ -263,8 +263,8 @@ class _RealtimeHeader extends ConsumerWidget {
       },
       loading: () {
         final status = fallbackStatus;
-        final size = DownloadsList._formatBytesStatic(fallbackFileSize);
-        final done = DownloadsList._formatBytesStatic(fallbackDownloaded);
+        final size = DownloadsList.formatBytesStatic(fallbackFileSize);
+        final done = DownloadsList.formatBytesStatic(fallbackDownloaded);
         return Row(
           children: [
             Expanded(
@@ -293,8 +293,8 @@ class _RealtimeHeader extends ConsumerWidget {
       },
       error: (_, __) {
         final status = fallbackStatus;
-        final size = DownloadsList._formatBytesStatic(fallbackFileSize);
-        final done = DownloadsList._formatBytesStatic(fallbackDownloaded);
+        final size = DownloadsList.formatBytesStatic(fallbackFileSize);
+        final done = DownloadsList.formatBytesStatic(fallbackDownloaded);
         return Row(
           children: [
             Expanded(

@@ -9,7 +9,6 @@ import 'package:app/features/descargas/infrastructure/mappers/download_mapper.da
 import 'package:app/features/descargas/infrastructure/repositories/downloads_repository_impl.dart';
 import 'package:app/features/descargas/presentation/notifiers/download_notifier.dart';
 import 'package:app/features/descargas/presentation/states/download_state.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 

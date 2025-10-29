@@ -21,17 +21,17 @@ const allowedOrigins = getAllowedOrigins();
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
     if (!origin) {
-      console.log('✅ Request without origin allowed (mobile app, Postman, etc.)');
+      // console.log('✅ Request without origin allowed (mobile app, Postman, etc.)');
       return callback(null, true);
     }
     if (process.env.NODE_ENV === 'development') {
       if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-        console.log(`✅ Development origin allowed: ${origin}`);
+        // console.log(`✅ Development origin allowed: ${origin}`);
         return callback(null, true);
       }
     }
     if (allowedOrigins.includes(origin)) {
-      console.log(`✅ Origin allowed: ${origin}`);
+      // console.log(`✅ Origin allowed: ${origin}`);
       return callback(null, true);
     }
     console.log(`🚫 CORS blocked origin: ${origin}`);

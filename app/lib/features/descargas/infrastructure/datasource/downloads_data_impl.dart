@@ -139,13 +139,13 @@ class DownloadsDataImpl extends DownloadsDatasource {
   Future<StatsModel> stats() async {
     try {
       final response = await _dio.get('/api/stats');
-      return StatsMapper.jsonToEntity(response.data);
+      return StatsMapper.jsonToEntity(response.data['stats']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     } catch (e) {
-      throw const ApiException(
+      throw ApiException(
         code: 'GET_STATS_ERROR',
-        message: 'Error al obtener stats.',
+        message: 'Error al obtener stats. ${e.toString()}',
       );
     }
   }

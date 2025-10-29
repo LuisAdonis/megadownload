@@ -7,18 +7,48 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DownloadNotifier extends StateNotifier<DownloadState> {
   final DownloadsRepository repo;
   DownloadNotifier({required this.repo}) : super(DownloadState());
+  initHistorial() async {
+    try {
+      state = state.copyWith(isLoading: true);
+      final data = await repo.listHistory();
+      final stats = await repo.stats();
+      state = state.copyWith(
+        downloadsHistory: data,
+        isLoading: false,
+        stats: stats,
+        errorMessage: '',
+      );
+      state.clearError();
+    } on ApiException catch (e) {
+      debugPrint('API Error loading data: ${e.message}');
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.message,
+      );
+    } catch (e) {
+      if (mounted) {
+        debugPrint('Unexpected error loading DownloadNotifier: $e');
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'Error inesperado al cargar los datos',
+        );
+      }
+    }
+  }
 
   init() async {
     try {
       state = state.copyWith(isLoading: true);
       final data = await repo.list();
+      final stats = await repo.stats();
       // final dataHistorial = await repo.listHistory();
       state = state.copyWith(
         downloads: data,
-        // downloadsHistory: dataHistorial,
         isLoading: false,
-        errorMessage: null,
+        stats: stats,
+        errorMessage: '',
       );
+      state.clearError();
     } on ApiException catch (e) {
       debugPrint('API Error loading data: ${e.message}');
       state = state.copyWith(

@@ -28,7 +28,7 @@ export class DownloadController {
       const existing = await Download.findOne({
         url: url,
       });
-      if (existing) {
+      if (existing && (existing.status === 'completed' || existing.status ==='downloading' || existing.status==='queued')) {
         res.status(409).json({
           error: 'El archivo ya ha sido descargado previamente',
           downloadId: existing.downloadId,

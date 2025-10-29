@@ -8,7 +8,7 @@ class PageTest extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
-      child: ShadCard(child: Text("......................")),
+      child: ShadCard(child: Text(".......dd...............")),
     );
   }
 }
