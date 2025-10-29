@@ -11,7 +11,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - -./data/monfo:/data/db
+      - ./data/monfo:/data/db
       - ./data/mongodb_config:/data/configdb
     networks:
       - megadownload_network
