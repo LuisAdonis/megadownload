@@ -41,5 +41,7 @@ const downloadSchema = new Schema<IDownload>({
   updatedAt: { type: Number, default: Date.now },
   provider: { type: String, enum: ['mega', '1fichier'], required: true }
 });
+downloadSchema.index({ status: 1, createdAt: -1 });
+downloadSchema.index({ downloadId: 1 }, { unique: true });
 
 export const Download = mongoose.model<IDownload>('Download', downloadSchema);

@@ -135,7 +135,10 @@ class _RealtimeProgressBar extends ConsumerWidget {
         final pct = d.progress.isFinite ? (d.progress / 100).clamp(0, 1) : 0.0;
         return ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(value: double.tryParse(pct.toString()), minHeight: 8, backgroundColor: Colors.grey.shade200),
+          child: LinearProgressIndicator(
+            value: double.tryParse(pct.toString()),
+            minHeight: 8,
+          ),
         );
       },
       loading: () => ClipRRect(
