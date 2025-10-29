@@ -20,7 +20,7 @@ RUN flutter pub get
 COPY app/ .
 
 # Compilar para web en modo release
-RUN flutter build web --release --dart-define=API_URL=$API_URL
+RUN flutter build web --release 
 
 # Etapa 2: Servidor Nginx para producción
 FROM nginx:alpine

@@ -9,7 +9,7 @@ class DioProvider {
   static Dio createUnauthenticatedClient() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: const String.fromEnvironment('API_URL', defaultValue: String.fromEnvironment('API_URL')),
+        baseUrl: const String.fromEnvironment('API_URL', defaultValue: "http://192.168.123.40:3000"),
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         // sendTimeout: const Duration(seconds: 30),

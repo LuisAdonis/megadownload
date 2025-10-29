@@ -48,7 +48,7 @@ Stream<DownloadModel> _downloadSseStream(String baseUrl, String id) async* {
 
 final downloadProgressProvider = StreamProvider.family<DownloadModel, String>((ref, id) {
   final controller = StreamController<DownloadModel>();
-  final sub = _downloadSseStream(String.fromEnvironment('API_URL'), id).listen(controller.add, onError: controller.addError, onDone: controller.close);
+  final sub = _downloadSseStream("http://192.168.123.40:3000", id).listen(controller.add, onError: controller.addError, onDone: controller.close);
   ref.onDispose(() {
     sub.cancel();
     controller.close();
