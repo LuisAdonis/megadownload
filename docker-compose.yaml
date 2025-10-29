@@ -51,7 +51,7 @@ services:
     networks:
       - megadownload_network
     environment:
-      API_URL: http://api:3000
+      API_URL: http://192.168.123.40:3000
 
 networks:
   megadownload_network:
