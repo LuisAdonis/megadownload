@@ -1,17 +1,43 @@
+import 'package:app/core/router/app_router.dart';
+import 'package:app/features/widgets/riverpod/provider_general.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
+}
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Material App Bar')),
-        body: const Center(child: Text('Hello World')),
+  Widget build(BuildContext context, ref) {
+    final appouter = ref.watch(goRouterProvider);
+    final general = ref.watch(generalProvider);
+    return ShadApp.router(
+      title: 'MegaDownload App',
+      routerConfig: appouter,
+      themeMode: general.themeMode,
+      darkTheme: ShadThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ShadSlateColorScheme.dark(),
+      ),
+      theme: ShadThemeData(
+        brightness: Brightness.light,
+        colorScheme: ShadBlueColorScheme.light(),
+        breakpoints: ShadBreakpoints(
+          tn: 0, // tiny
+          sm: 640, // small
+          md: 768, // medium
+          lg: 1024, // large
+          xl: 1280, // extra large
+          xxl: 1536, // extra extra large
+        ),
       ),
     );
   }

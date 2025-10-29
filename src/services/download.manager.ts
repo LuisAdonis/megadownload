@@ -286,12 +286,42 @@ export class UniversalDownloadManager extends EventEmitter {
   }
 
   async resumeDownload(id: string): Promise<boolean> {
-    const downloadInfo = this.downloads.get(id);
-    if (!downloadInfo || downloadInfo.status !== 'paused') {
+    let downloadInfo = this.downloads.get(id);
+
+    if (!downloadInfo) {
+      // Intentar rehidratar una descarga existente desde la base de datos
+      const doc = await Download.findOne({ downloadId: id });
+      if (doc) {
+        downloadInfo = {
+          id: doc.downloadId,
+          url: doc.url,
+          fileName: doc.fileName,
+          fileSize: doc.fileSize,
+          downloadedSize: doc.downloadedSize,
+          status: doc.status,
+          progress: doc.progress,
+          speed: 0,
+          timeRemaining: doc.timeRemaining,
+          error: doc.error || undefined,
+          startTime: doc.startTime || undefined,
+          endTime: doc.endTime || undefined,
+          createdAt: doc.createdAt,
+          provider: doc.provider as any
+        };
+        this.downloads.set(id, downloadInfo);
+      }
+    }
+
+    if (!downloadInfo) return false;
+
+    // Estados que permitimos reintentar/reanudar
+    const resumableStatuses = new Set(['paused', 'failed', 'quota_exceeded']);
+    if (!resumableStatuses.has(downloadInfo.status)) {
       return false;
     }
 
     downloadInfo.status = 'queued';
+    downloadInfo.speed = 0;
     await this.saveToDatabase(downloadInfo);
     this.queue.unshift(id);
     this.processQueue();
