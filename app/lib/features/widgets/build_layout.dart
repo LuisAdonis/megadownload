@@ -34,7 +34,6 @@ class BuildLayout extends ConsumerWidget {
                 Container(
                   width: 230,
                   decoration: BoxDecoration(
-                    // color: const Color(0xFFF8FAFC),
                     border: Border(
                       right: BorderSide(
                         color: Colors.grey.shade200,
