@@ -6,6 +6,8 @@ const getAllowedOrigins = (): string[] => {
     'http://localhost:3000',
     'http://localhost:5000',
     'http://127.0.0.1:5000',
+    'http://192.168.123.40:80',
+    'http://192.168.123.40',
   ];
   // Agregar orígenes desde variable de entorno si existe
   const envOrigins = process.env.ALLOWED_ORIGINS;
