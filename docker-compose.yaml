@@ -36,11 +36,6 @@ services:
       - mongodb
     networks:
       - megadownload_network
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 1G
 
   # Cliente Flutter Web
   flutter_web:
