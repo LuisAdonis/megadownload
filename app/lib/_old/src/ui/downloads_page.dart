@@ -274,7 +274,7 @@ class _RealtimeHeader extends ConsumerWidget {
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: _statusColor(status, context).withOpacity(0.12), borderRadius: BorderRadius.circular(999)),
+              decoration: BoxDecoration(color: _statusColor(status, context).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(999)),
               child: Text(status, style: TextStyle(color: _statusColor(status, context), fontSize: 12)),
             ),
           ],
@@ -287,22 +287,6 @@ class _RealtimeHeader extends ConsumerWidget {
 class _DownloadsList extends ConsumerWidget {
   final List<DownloadModel> items;
   const _DownloadsList({required this.items});
-
-  Color _statusColor(String status, BuildContext context) {
-    switch (status) {
-      case 'completed':
-        return Colors.green;
-      case 'downloading':
-        return Theme.of(context).colorScheme.primary;
-      case 'paused':
-        return Colors.orange;
-      case 'failed':
-      case 'quota_exceeded':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

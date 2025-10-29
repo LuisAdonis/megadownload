@@ -1,3 +1,5 @@
+import 'package:app/features/descargas/presentation/providers/download_provider.dart';
+import 'package:app/features/widgets/elements/form_url.dart';
 import 'package:app/features/widgets/riverpod/provider_general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +72,9 @@ class CustomAppBar extends ConsumerWidget {
                   size: 16,
                 ),
                 child: showButtonText ? const Text('Actualizar') : null,
-                onPressed: () {},
+                onPressed: () {
+                  ref.read(downloadsProvider.notifier).init();
+                },
               ),
               SizedBox(width: showButtonText ? 16 : 8),
               ShadButton(
@@ -79,7 +83,14 @@ class CustomAppBar extends ConsumerWidget {
                   size: 16,
                 ),
                 child: showButtonText ? const Text('Nueva descarga') : null,
-                onPressed: () {},
+                onPressed: () {
+                  showShadDialog(
+                    context: context,
+                    builder: (context) {
+                      return FormUrl();
+                    },
+                  );
+                },
               ),
             ],
           ),

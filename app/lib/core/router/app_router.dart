@@ -1,4 +1,5 @@
-import 'package:app/features/dashboard/dashboard_page.dart';
+import 'package:app/features/descargas/presentation/page/descarga_historial_page.dart';
+import 'package:app/features/descargas/presentation/page/descargas_page.dart';
 import 'package:app/features/page_test.dart';
 import 'package:app/features/splash/splas_page.dart';
 import 'package:app/features/widgets/custom_navegation.dart';
@@ -18,11 +19,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/dashboard',
-            builder: (context, state) => DashboardPage(),
+            builder: (context, state) => DescargasPage(),
           ),
           GoRoute(
-            path: '/page1',
-            builder: (context, state) => PageTest(),
+            path: '/historial',
+            builder: (context, state) => DescargaHistorialPage(),
           ),
           GoRoute(
             path: '/page2',

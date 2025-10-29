@@ -65,7 +65,7 @@ class CustomSideBar extends StatelessWidget {
                     onTap: () {
                       ref.read(generalProvider.notifier).selectState(selectid: 1);
 
-                      context.push("/page1");
+                      context.push("/historial");
                     },
                   ),
                   const SizedBox(height: 4),

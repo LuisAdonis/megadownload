@@ -27,9 +27,10 @@ class MyApp extends ConsumerWidget {
         brightness: Brightness.dark,
         colorScheme: ShadSlateColorScheme.dark(),
       ),
+
       theme: ShadThemeData(
         brightness: Brightness.light,
-        colorScheme: ShadBlueColorScheme.light(),
+        colorScheme: ShadNeutralColorScheme.light(),
         breakpoints: ShadBreakpoints(
           tn: 0, // tiny
           sm: 640, // small

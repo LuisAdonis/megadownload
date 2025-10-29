@@ -5,9 +5,16 @@ import { DownloadController } from './controllers/download.controller';
 import { createDownloadRoutes } from './routes/download.routes';
 import { config } from './config/config';
 import dotenv from 'dotenv';
+import cors from 'cors';
+
+import { getCorsConfig } from './config/cors.config';
+
 export async function createApp() {
   dotenv.config();
   const app = express();
+  const corsConfig = getCorsConfig();
+  app.use(cors(corsConfig));
+
   app.use(express.json());
 
   // Conectar a MongoDB
