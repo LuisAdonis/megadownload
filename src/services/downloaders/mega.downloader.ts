@@ -43,7 +43,7 @@ export class MegaDownloader extends BaseDownloader {
 
         const fileSize = file.size || 0;
         this.writeStream = fs.createWriteStream(downloadPath);
-        this.downloadStream = file.download({});
+        this.downloadStream = file.downloadBuffer;
 
         let downloadedSize = 0;
         let lastUpdate = Date.now();
